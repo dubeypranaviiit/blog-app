@@ -1,24 +1,35 @@
 "use client"
 import { assets } from '@/Assets/assets'
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import Image from 'next/image'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { useUser } from '@clerk/nextjs'
 const page = () => {
+    const { user } = useUser();
+  if (!user) return null;
     const [image,setImage]= useState(null);
     const [data,setData] = useState({
       title:"",
       description:"",
       category:"Startup",
-      author:"Pranav",
-      authorImg:"/profile_img.png"
+      author:"",
+      authorImg:""
     })
+     useEffect(() => {
+    if (user) {
+      setData(prev => ({
+        ...prev,
+        author: user.fullName || user.username || "Anonymous",
+        authorImg: user.imageUrl || "/profile_img.png"
+      }));
+    }
+  }, [user]);
     const onChangeHandler =(e)=>{
       const name = e.target.name;
       const value = e.target.value;
       setData(data=>({...data,[name]:value}))
     }
-    // console.log(data);
     const onSubmitHandler = async (e)=>{
        e.preventDefault();
       const formData = new FormData();
@@ -50,20 +61,17 @@ const page = () => {
 <p className='text-xl mt-4'>Blog Description</p>
 <textarea name='description' onChange={onChangeHandler} value={data.description} className='w-full sm:w-[500px] mt-4 px-4 py-3 border ' type="text" placeholder='Blog Description'  required/>
 <p className='text-xl mt-4'>Blog Category</p>
-{/* <div className='border border-slate-400 mt-4 w-full'> */}
 <select name="category" onChange={onChangeHandler} value={data.category} className='w-full sm:w-[500px] mt-4 px-4 py-3 border'>
     <option value="Startup"> Startup</option>
     <option value="technology">Technology</option>
     <option value="lifestyle">LifeStyle</option>
+     <option value="other">Other</option>
 </select>
-{/* </div> */}
+
 <br />
 <button type='submit' className='mt-8 w-40 h-12 bg-black text-white'>Add</button>
 
- </form>
- 
- 
- 
+ </form> 
  </>
   )
 }

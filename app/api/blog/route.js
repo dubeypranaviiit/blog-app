@@ -11,10 +11,6 @@ const LoadDb = async()=>{
 }
 LoadDb();
 
-
-
-
-
  export async function GET(request){
    const blogs = await Blog.find({});
     return NextResponse.json({

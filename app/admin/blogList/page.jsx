@@ -1,48 +1,44 @@
 "use client";
 
+import { assets } from '@/Assets/assets';
 import BlogTableItem from '@/Components/AdminComponent/BlogTableItem';
+
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 const Page = () => {
   const [blogs, setBlogs] = useState([]);
-
+  //  const {user} =useUser();
   const fetchBlogs = async () => {
     try {
       const response = await axios.get('/api/blog');
-      console.log("Fetched Blogs:", response.data); // Debugging log
+      console.log("Fetched Blogs:", response.data); 
       setBlogs(response.data.blogs);
-      if (response.data.success) {
-       
-        // console.log('blogs length',blogs.length);
-        toast.success("Successfully fetched data");
-      } else {
-        toast.error("Something went wrong");
-      }
+      toast.success("Successfully fetched data");
     } catch (error) {
       console.log("Error fetching blogs:", error);
     }
   };
-  const deleteBlogs = async(mongoId)=>{
-    try{
-
-      const responce = await axios.delete('/api/blog',{
-     params:{
-        id:mongoId
+  const deleteBlog = async (mongoId) => {
+    try {
+      const response = await axios.delete('/api/blog', {
+        params: { id: mongoId },
+      });
+        toast.success(response.data.message);
+        const updatedBlogs = await fetchBlogs();
+        console.log("Updated Blogs:", updatedBlogs);
+  
+    } catch (error) {
+      console.log("Error deleting blog:", error);
+      toast.error("An error occurred while deleting the blog.");
     }
-     } )
-     if(responce.data.success){
-      toast.success(responce.data.message);
-      fetchBlogs();
-     }
-    }catch(error){
-      console.log(error);
-    }
-  }
+  };
+  
   useEffect(() => {
     fetchBlogs();
     console.log(blogs, 'blogs');
+   
   }, []);
 
   return (
@@ -69,8 +65,8 @@ const Page = () => {
                     mongoId={item._id}
                     title={item.title}
                     author={item.author}
-                    deleteBlog={deleteBlogs}
-                    // authorImg={authorImageSrc} // Ensure it's a URL
+                    deleteBlog={deleteBlog}
+                    authorImg={assets.facebook_icon} // Ensure it's a URL
                     date={new Date(item.createdAt).toLocaleDateString()}
                   />
                 );
