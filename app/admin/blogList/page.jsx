@@ -1,15 +1,11 @@
 "use client";
-
 import { assets } from '@/Assets/assets';
 import BlogTableItem from '@/Components/AdminComponent/BlogTableItem';
-
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-
 const Page = () => {
   const [blogs, setBlogs] = useState([]);
-  //  const {user} =useUser();
   const fetchBlogs = async () => {
     try {
       const response = await axios.get('/api/blog');
@@ -42,7 +38,7 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="flex-1 pt-5 px-5 sm:pt-12 sm:pl-16">
+    <div className="flex-1 pt-5 px-5 sm:pt-12 sm:pl-16 min-h-screen bg-white">
       <h1>All Blogs</h1>
       <div className="relative h-[80vh] max-w-[850px] overflow-x-auto mt-4 border border-gray-400 scrollbar-hide">
         <table className="w-full text-sm text-gray-500">

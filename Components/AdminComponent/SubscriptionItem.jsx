@@ -1,7 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
-import { assets, blog_data} from '@/Assets/assets'
-import Link from 'next/link'
 import { CrossIcon } from 'lucide-react'
 const SubscriptionItem = ({email,date,deleteEmail,mongoId}) => {
   return (

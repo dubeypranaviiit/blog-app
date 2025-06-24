@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-// import connectDB from "@/lib/connectDB";
-import Blog from "@/models/Blog";
+import Blog from "@/modals/Blog";
 import dbConnect from "@/lib/config/db";
 export async function POST(req, { params }) {
   await dbConnect();
@@ -14,14 +13,10 @@ export async function POST(req, { params }) {
   const hasLiked = blog.likes.includes(userId);
 
   if (hasLiked) {
-    // Unlike
     blog.likes = blog.likes.filter(id => id !== userId);
   } else {
-    // Like
     blog.likes.push(userId);
   }
-
   await blog.save();
-
   return NextResponse.json({ success: true, liked: !hasLiked, totalLikes: blog.likes.length });
 }

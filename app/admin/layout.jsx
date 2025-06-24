@@ -1,27 +1,15 @@
-import Sidebar from "@/Components/AdminComponent/Sidebar"
-import Image from "next/image"
-import { assets } from "@/Assets/assets"
+import Sidebar from "@/Components/AdminComponent/Sidebar";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"
-import { UserButton } from "@clerk/nextjs";
-export default function adminLayout({children}){
-return (
-    <>
-    <div className="flex">
-        <ToastContainer theme="dark" />
-        <Sidebar/>
-        <div className="flex flex-col w-full">
-            <div className="flex items-center justify-between w-full py-3 max-h-[60px] px-12 border-b border-black">
-                <h3 className="font-medium text-3xl ">Admin Panel</h3>
-                <UserButton />
+import "react-toastify/dist/ReactToastify.css";
 
-            </div>
-            {
-        children
-            }
-        </div>
+export default function adminLayout({ children }) {
+  return (
+    <div className="flex min-h-screen bg-[#f9fafb]">
+      <ToastContainer theme="dark" />
+      <Sidebar />
+      <main className="flex-1 px-4 sm:px-8 py-6 overflow-y-auto">
+        {children}
+      </main>
     </div>
-    
-    </>
-)
+  );
 }

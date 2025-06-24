@@ -18,7 +18,7 @@ import facebook_icon from './facebook_icon.png'
 import googleplus_icon from './googleplus_icon.png'
 import twitter_icon from './twitter_icon.png'
 import profile_icon from './profile_icon.png'
-import logo from './logo.png'
+// import logo from './logo.png'
 import arrow from './arrow.png'
 import logo_light from './logo_light.png'
 import blog_icon from './blog_icon.png'
@@ -26,18 +26,25 @@ import add_icon from './add_icon.png'
 import email_icon from './email_icon.png'
 import upload_area from './upload_area.png'
 import blogger from "./blogger.jpg"
+import coverImg  from "./coverimg.jpg"
+import myLogo  from "./myLogo.png"
+import Logo_Icon from "./Logo_Icon.png"
+import HamaraLoga from "./HamaraLoga.jpg"
+// import founder from "./founder.jpg"
+import Chat from "./chat.png"
+import LogoCompany from "./LogoCompany.jpg"
 export const assets = {
-    facebook_icon,
-    googleplus_icon,
+    facebook_icon,coverImg,Logo_Icon,HamaraLoga,
+    googleplus_icon,LogoCompany,
     twitter_icon,
     profile_icon,
-    logo,blogger,
+    blogger,
     arrow,
     logo_light,
     blog_icon,
     add_icon,
     email_icon,
-    upload_area
+    upload_area,myLogo,blog_pic_7,Chat
     }
 
     export const blog_data = [{

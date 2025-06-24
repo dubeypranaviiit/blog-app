@@ -1,83 +1,113 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   FiHeart,
   FiShare2,
-  FiMessageSquare,
   FiTrash2,
 } from "react-icons/fi";
 import ShareModal from "./ShareModal";
 import { useUser } from "@clerk/nextjs";
-//  const params = useParams();
- import  {useParams}  from "next/navigation";
+import { useParams } from "next/navigation";
+
 const LikeShareComment = ({ blogId }) => {
-   const params = useParams();
+  const params = useParams();
+  const id = params.id;
 
   const { user, isSignedIn } = useUser();
   const isAdmin = user?.publicMetadata?.role === "admin";
+
   const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
- const id = params.id;
- console.log(blogId);
- console.log(id);
-  // Fetch comments (and likes if using real data)
-  const fetchComments = async () => {
-    try {
-      const blog_Id=blogId;
- const res=await  axios.get(`/api/comments/${blogId}`, {
-    params: {
-    page: 1,
-    limit: 10
-  }
-});
 
-      setComments(res.data.comments || []);
+useEffect(() => {
+  const fetchLikeData = async () => {
+    try {
+      const requests = [axios.get(`/api/like/${blogId}`)];
+      if (user?.id) {
+        requests.push(
+          axios.get(`/api/like/${blogId}/status`, {
+            params: { userId: user.id },
+          })
+        );
+      }
+
+      const [countRes, statusRes] = await Promise.all(requests);
+      setLikes(countRes.data.count || 0);
+      console.log(likes);
+      if (statusRes) {
+        setIsLiked(statusRes.data.isLiked);
+      }
+    } catch (err) {
+      console.error("Error fetching like data", err);
+    }
+  };
+
+  if (blogId) fetchLikeData(); 
+}, [blogId, user?.id]); 
+
+ 
+  const fetchComments = async (reset = false) => {
+    try {
+      const res = await axios.get(`/api/comments/${blogId}`, {
+        params: { page: reset ? 1 : page, limit: 5 },
+      });
+
+      const newComments = res.data.comments || [];
+
+      if (reset) {
+        setComments(newComments);
+        setPage(2); // next page
+      } else {
+        setComments((prev) => [...prev, ...newComments]);
+        setPage((prev) => prev + 1);
+      }
+
+      if (newComments.length < 5) {
+        setHasMore(false);
+      }
     } catch (err) {
       console.error("Error loading comments:", err);
     }
   };
 
   useEffect(() => {
-    fetchComments();
+    if (blogId) {
+      setPage(1);
+      setHasMore(true);
+      fetchComments(true);
+    }
   }, [blogId]);
-const handleLike = async () => {
+
+
+  const handleLike = async () => {
+  if (!isSignedIn) return;
+  setIsLiked(!isLiked);
+  setLikes(prev => isLiked ? prev - 1 : prev + 1);
+
   try {
     if (isLiked) {
-      await axios.delete(`/api/like/${blogId}`, { data: { userId: user.id } });
-      setLikes((prev) => prev - 1);
+      await axios.delete(`/api/like/${blogId}`, {
+        data: { userId: user.id },
+      });
     } else {
-      await axios.post(`/api/like/${blogId}`, { userId: user.id });
-      setLikes((prev) => prev + 1);
+      await axios.post(`/api/like/${blogId}`, {
+        userId: user.id,
+      });
     }
-
-    setIsLiked(!isLiked);
   } catch (err) {
+    
     console.error("Like/unlike failed", err);
+    setIsLiked(isLiked);
+    setLikes(prev => isLiked ? prev + 1 : prev - 1);
   }
 };
-useEffect(() => {
-  const fetchLikeStatus = async () => {
-    try {
-      const res = await axios.get(`/api/like/${blogId}/status`, {
-        params: { userId: user.id },
-      });
-      setIsLiked(res.data.isLiked);
-    } catch (err) {
-      console.error("Error fetching like status", err);
-    }
-  };
-
-  if (user?.id && blogId) {
-    fetchLikeStatus();
-  }
-}, [blogId, user]);
-
-  const handleCommentSubmit = async (e) => {
+const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim() || !isSignedIn) return;
 
@@ -87,55 +117,43 @@ useEffect(() => {
         username: user.username || user.fullName || "Anonymous",
       },
       message: newComment,
-      id
+      id,
     };
 
     try {
-      const res = await axios.post(
-       `/api/comments/${blogId}`,
-        commentData
-      );
-
+      const res = await axios.post(`/api/comments/${blogId}`, commentData);
       setComments([res.data.comment, ...comments]);
       setNewComment("");
     } catch (err) {
       console.error("Failed to post comment", err);
     }
   };
-
-  const handleDeleteComment = async (commentId) => {
-    const confirmDelete = confirm("Delete this comment?");
-    if (!confirmDelete) return;
-
-    try {
-      await axios.delete(
-        `api/comments/${blogId}`,
-        {
-          headers: {
-            "x-user-role": isAdmin ? "admin" : "user",
-          },
-
-        }
-      );
-      setComments(comments.filter((c) => c._id !== commentId));
-    } catch (err) {
-      console.error("Failed to delete comment", err);
-      alert("Delete failed");
-    }
-  };
-
+const handleDeleteComment = async (commentId) => {
+  try {
+    await axios.delete(`/api/comments/${blogId}`, {
+      headers: {
+        "x-user-role": isAdmin ? "admin" : "user",
+        "x-user-id": user.id, 
+      },
+      data: { commentId }, 
+    });
+    setComments((prev) => prev.filter((c) => c._id !== commentId));
+  } catch (err) {
+    console.error("❌ Failed to delete comment:", err);
+    alert("Failed to delete the comment. Please try again.");
+  }
+};
   return (
     <>
-     
+   
       <div className="flex gap-4 mb-6">
-        <button
-          onClick={handleLike}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-            isLiked ? "bg-red-100 text-red-500" : "bg-gray-100"
-          } hover:bg-gray-200`}
-        >
-          <FiHeart /> {likes}
-        </button>
+        { isSignedIn ? (
+          <button onClick={handleLike}>
+                          {isLiked ? "❤️ Liked" : "🤍 Like"} ({likes})
+             </button>
+       
+        ):''
+      }
 
         <button
           onClick={() => setIsShareModalOpen(true)}
@@ -145,7 +163,7 @@ useEffect(() => {
         </button>
       </div>
 
-      {/* Comments Form */}
+    
       {isSignedIn ? (
         <form onSubmit={handleCommentSubmit} className="mb-6">
           <textarea
@@ -165,7 +183,7 @@ useEffect(() => {
         <p className="mb-4 text-gray-500">Login to comment.</p>
       )}
 
-      {/* Comments List */}
+      
       <div className="space-y-4">
         {comments.map((c) => (
           <div
@@ -191,6 +209,19 @@ useEffect(() => {
         ))}
       </div>
 
+      
+      {hasMore && comments.length > 0 && (
+        <div className="text-center mt-4">
+          <button
+            onClick={() => fetchComments()}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Load More Comments
+          </button>
+        </div>
+      )}
+
+      
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
@@ -201,4 +232,3 @@ useEffect(() => {
 };
 
 export default LikeShareComment;
-

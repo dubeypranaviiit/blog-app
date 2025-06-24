@@ -1,38 +1,41 @@
-// import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import Comment from "@/lib/models/comment.modal";
-import Blog from "@/lib/models/Blog.model"
 import dbConnect from "@/lib/config/db";
-// get
+import Blog from "@/lib/modals/Blog.modal";
+import Comment from "@/lib/modals/comment.modal";
 export async function GET(req, { params }) {
   await dbConnect();
-  console.log(`get request aaya comment find krne k liye`);
-  try {
-   const id = params.blogId;
+  const blogId = params.blogId;
 
-   console.log(id);
-    const blog = await Blog.findById(id);
+  const { searchParams } = new URL(req.url);
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 5;
+  const skip = (page - 1) * limit;
+
+  try {
+    const blog = await Blog.findById(blogId);
     if (!blog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
-    const comments = await Comment.find({ blogId: id }).sort({ createdAt: -1 });
 
-    return NextResponse.json({ comments });
+    const comments = await Comment.find({ blogId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Comment.countDocuments({ blogId });
+
+    return NextResponse.json({ comments, total });
   } catch (error) {
     console.error(" Error fetching comments:", error);
     return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });
   }
 }
-// POST Comment
 export async function POST(req, { params }) {
-  console.log("📩 Request received on comments endpoint");
   await dbConnect();
+  const blogId = params.blogId;
 
   try {
-    const { user, message ,id} = await req.json();  // ✅ no need to extract `id`
-    console.log("🧑‍💻 User:", user);
-    console.log("💬 Message:", message);
-    console.log("🆔 Blog ID from URL:", params.id);
+    const { user, message } = await req.json();
 
     if (!user?.userId || !message?.trim()) {
       return NextResponse.json(
@@ -41,53 +44,53 @@ export async function POST(req, { params }) {
       );
     }
 
-    const blog = await Blog.findById(id);
+    const blog = await Blog.findById(blogId);
     if (!blog) {
-      console.log("❌ Blog not found");
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
     const comment = await Comment.create({
+      blogId,
       userId: user.userId,
       username: user.username || "Guest",
       message,
-      blogId:id,
     });
-
-    console.log("✅ Comment saved:", comment);
 
     return NextResponse.json({ success: true, comment });
   } catch (error) {
-    console.log("❌ Error adding comment:", error);
-    return NextResponse.json(
-      { error: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error(" Error posting comment:", error);
+    return NextResponse.json({ error: "Failed to post comment" }, { status: 500 });
   }
 }
-// DELETE Comment
-export async function DELETE(req, { params }) {
+export async function DELETE(req, context) {
   await dbConnect();
-   // sessionClaims can include roles
-  const { commentId } = await req.json();
+  const { params } = context;
+  const blogId = params.blogId;
 
-  if (!userId || !commentId) {
-    return NextResponse.json({ error: "Unauthorized or missing data" }, { status: 400 });
+  try {
+    const { commentId } = await req.json();
+    const userRole = req.headers.get("x-user-role");
+    const userId = req.headers.get("x-user-id");
+
+    if (!commentId || !userId) {
+      return NextResponse.json({ error: "Missing commentId or userId" }, { status: 400 });
+    }
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return NextResponse.json({ error: "Comment not found" }, { status: 404 });
+    }
+
+    const isAdmin = userRole === "admin";
+    if (comment.userId !== userId && !isAdmin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    await comment.deleteOne();
+
+    return NextResponse.json({ success: true, message: "Comment deleted" });
+  } catch (error) {
+    console.log("Error deleting comment:", error);
+    return NextResponse.json({ error: "Failed to delete comment" }, { status: 500 });
   }
-
-  const blog = await Blog.findById(params.blogId);
-  if (!blog) return NextResponse.json({ error: "Blog not found" }, { status: 404 });
-
-  const comment = blog.comments.id(commentId);
-  if (!comment) return NextResponse.json({ error: "Comment not found" }, { status: 404 });
-
-  const isAdmin = sessionClaims?.role === "admin";
-  if (comment.userId !== userId && !isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
-
-  comment.remove();
-  await blog.save();
-
-  return NextResponse.json({ success: true, message: "Comment deleted" });
 }

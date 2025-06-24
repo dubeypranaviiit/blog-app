@@ -1,20 +1,12 @@
 import dbConnect from "@/lib/config/db";
 import  { NextResponse } from "next/server";
-import {writeFile} from "fs/promises"
-import { title } from "process";
-const fs = require('fs')
-// import {fs}
-// import { arrayBuffer } from "stream/consumers";
-import Blog from "@/lib/models/Blog.model";
-const LoadDb = async()=>{
-    await dbConnect();
-}
-LoadDb();
-export async function GET(req, { params }) {
- 
-console.log(`request aaya hai by id `);
+import Blog from "@/lib/modals/Blog.modal";
+export async function GET(req,{ params }) {
+ await dbConnect();
+ const blogId = params.id;
+
   try {
-    const blog = await Blog.findById(params.id);
+    const blog = await Blog.findById(blogId);
 
     if (!blog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });

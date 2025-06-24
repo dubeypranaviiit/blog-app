@@ -1,16 +1,11 @@
 "use client"
-import { assets } from "@/Assets/assets";
 import axios from "axios";
-// import e from "express";
-import Image from "next/image";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+
+
 const Header = () => {
-  const { isSignedIn, user } = useUser();
-  const userL= UserButton();
   const [email,setEmail] = useState('');
   const [subscribed,SetSubscribed] = useState(false)
   const subscribedEmail = async()=>{
@@ -30,7 +25,7 @@ const Header = () => {
   try{
    const responce = await axios.post("/api/email",formData,{
     headers: {
-      "Content-Type": "multipart/form-data", // ✅ Set correct content type
+      "Content-Type": "multipart/form-data", 
     },
   })
   if(responce.data.success){
@@ -44,29 +39,18 @@ const Header = () => {
   }
   }
   return (
-    <div className="py-5 px-5 md:px-12 lg:px-28">
-
-        <div className="flex justify-between items-center">
-            <Image src={assets.logo} alt="No image Came" width={180}  className="w-[130px] sm:w-auto"/>
-          
-                    {!isSignedIn ? (
-          <Link href="/sign-up">
-            <button className="flex items-center gap-2 font-medium py-1 px-3 sm:py-3 sm:px-6 border border-black shadow-[-7px_7px_0px_#000000] hover:shadow-none transition">
-              Get Started
-              <Image src={assets.arrow} alt="arrow" width={16} height={16} />
-            </button>
-          </Link>
-        ) :  <UserButton />
+    <div className="w-full ">
        
-         
-       
-        }
-        </div>
-
       <div className="text-center my-8 ">
-        <h1 className=" text-3xl sm:text-5xl font-medium">Latest Blogs </h1>
+<h2 className="text-3xl font-bold mb-4">Stories That Spark Curiosity</h2>
+<p className="text-gray-600 mb-6 text-sm sm:text-base">
+  Dive into thoughtful articles from passionate voices around the world. Tech, travel, wellness, and beyond — one scroll at a time.
+  <Link href="/all-blog" className="text-blue-600 underline ml-1">Browse all blogs</Link>.
+</p>
+
+
         <p className="mt-10 max-w-[740px] m-auto text-xs sm:text-base"> 
-        Blogger is a place where journeys turn into stories. From city adventures to serene escapes, every blog shares the beauty of exploration. Whether you're seeking inspiration or travel tips, Safarnama celebrates the joy of discovering the world, one step at a time.
+        CurioBlog is a place where journeys turn into stories. From city adventures to serene escapes, every blog shares the beauty of exploration. Whether you're seeking inspiration or travel tips, Safarnama celebrates the joy of discovering the world, one step at a time.
         </p>
        
          <form  onSubmit={subscribeHandler} className=" flex justify-between max-w-[500px] scale-75 sm:scale-100 mx-auto mt-10 border border-black shadow-[-7px_7px_0px_#000000] ">

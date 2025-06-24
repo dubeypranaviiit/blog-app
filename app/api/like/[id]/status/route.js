@@ -1,29 +1,24 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/config/db";
-import Like from "@/lib/models/like.modal";
+import Like from "@/lib/modals/like.modal";
 
-export async function GET(req, { params }) {
+export async function GET(req, context) {
   await dbConnect();
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId");
+ const { params } = context; 
+  const blogId = params.id;
+
+
+  if (!userId) {
+    return NextResponse.json({ isLiked: false });
+  }
 
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
-
-    if (!userId) {
-      return NextResponse.json({ isLiked: false });
-    }
-
-    const existingLike = await Like.findOne({
-      blogId: params.blogId,
-      userId,
-    });
-
-    return NextResponse.json({ isLiked: !!existingLike });
-  } catch (error) {
-    console.error("Error checking like status:", error);
-    return NextResponse.json(
-      { error: "Failed to check like status" },
-      { status: 500 }
-    );
+    const liked = await Like.findOne({ blogId, userId });
+    return NextResponse.json({ isLiked: !!liked });
+  } catch (err) {
+    console.error(" Error checking like status:", err);
+    return NextResponse.json({ isLiked: false, error: "Failed to check status" }, { status: 500 });
   }
 }
