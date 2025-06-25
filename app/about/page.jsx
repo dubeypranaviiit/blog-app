@@ -1,9 +1,6 @@
 "use client";
 import { assets } from "@/Assets/assets";
 import Image from "next/image";
-import Header from "@/components/Header"; 
-import { Metadata } from "next";
-import Heade from "@/Components/extra/Heade";
 const topics = [
   { title: "Technology", description: "Latest innovations and industry insights.", icon: "💻" },
   { title: "Lifestyle", description: "Trends, wellness, and everyday inspiration.", icon: "🌿" },

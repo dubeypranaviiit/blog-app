@@ -1,7 +1,6 @@
 import dbConnect from "@/lib/config/db";
 import  { NextResponse } from "next/server";
 import {writeFile} from "fs/promises"
-import { title } from "process";
 const fs = require('fs')
 import Blog from "@/lib/modals/Blog.modal";
 import {sendEmail} from "@/lib/config/mail";
