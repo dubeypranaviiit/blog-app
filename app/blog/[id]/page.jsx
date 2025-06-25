@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import axios from "axios";
-import BlogDetail from "@/Components/extra/BlogDetails"; 
-import CheckOut from "@/Components/CheckOut";
+import BlogDetail from "@/components/extra/BlogDetails"; 
+import CheckOut from "@/components/CheckOut";
 export default function BlogPage() {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);

@@ -1,4 +1,4 @@
-import Sidebar from "@/Components/AdminComponent/Sidebar";
+import Sidebar from "@/components/AdminComponent/Sidebar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

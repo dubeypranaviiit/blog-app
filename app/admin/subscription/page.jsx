@@ -1,7 +1,7 @@
 "use client"
 import React, { useState,useEffect } from 'react'
 import axios from 'axios'
-import SubscriptionItem from '@/Components/AdminComponent/SubscriptionItem'
+import SubscriptionItem from '@/components/AdminComponent/SubscriptionItem'
 import { toast } from 'react-toastify'
 const page = () => {
       const [emails,setEmails]=useState([])
