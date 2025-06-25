@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import Blog from "@/modals/Blog";
+import Blog from "@/lib/modals/Blog.modal";
 import dbConnect from "@/lib/config/db";
 export async function POST(req, { params }) {
   await dbConnect();
