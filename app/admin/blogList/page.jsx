@@ -1,6 +1,6 @@
 "use client";
 import { assets } from '@/Assets/assets';
-import BlogTableItem from '@/components/AdminComponent/BlogTableItem';
+import BlogTableItem from "../../../components/AdminComponent/BlogTableItem"
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
