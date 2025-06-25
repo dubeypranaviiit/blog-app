@@ -2,7 +2,7 @@ import dbConnect from "@/lib/config/db";
 import  { NextResponse } from "next/server";
 import {writeFile} from "fs/promises"
 const fs = require('fs')
-import Blog from "@/lib/modals/Blog.modal";
+import Blog from '@/lib/modals/Blog.modal';
 import {sendEmail} from "@/lib/config/mail";
 import Email from "@/lib/modals/Email.modal";
  export async function GET(request){

@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/config/db";
 import  { NextResponse } from "next/server";
-import Blog from "@/lib/modals/Blog.modal";
+import Blog from '@/lib/modals/Blog.modal';
 export async function GET(req,{ params }) {
  await dbConnect();
  const blogId = params.id;

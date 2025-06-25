@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import axios from "axios";
-import BlogDetail from "@/components/extra/BlogDetails"; 
+import BlogDetails from '@/components/extra/BlogDetails'
 import CheckOut from "@/components/CheckOut";
 export default function BlogPage() {
   const { id } = useParams();
@@ -33,7 +33,7 @@ export default function BlogPage() {
     <>
       
       <main className="min-h-screen bg-white dark:bg-gray-900">
-        <BlogDetail blog={blog} />
+        <BlogDetails blog={blog} />
         <section className="my-12 px-6">
   <div className="max-w-2xl mx-auto text-center">
     <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
