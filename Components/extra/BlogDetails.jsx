@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { FiClock, FiTag } from "react-icons/fi";
 import LikeShareComment from "./LikeShareComment";
 
-const BlogDetail = ({ blog }) => {
+const BlogDetails = ({ blog }) => {
   const params = useParams();
   const id = params.id;
   return (
@@ -40,4 +40,4 @@ const BlogDetail = ({ blog }) => {
   );
 };
 
-export default BlogDetail;
+export default BlogDetails;
