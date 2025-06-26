@@ -10,6 +10,17 @@
 //   }
 //   }
 // }
+// {
+//   "compilerOptions": {
+//     "baseUrl": ".",
+//     "paths": {
+//       "@/*": ["./*"]
+//     },
+//     "forceConsistentCasingInFileNames": true
+//   },
+//   "include": ["next-env.d.ts", "**/*.js", "**/*.jsx"],
+//   "exclude": ["node_modules"]
+// }
 {
   "compilerOptions": {
     "baseUrl": ".",
@@ -17,7 +28,6 @@
       "@/*": ["./*"]
     },
     "forceConsistentCasingInFileNames": true
-  },
-  "include": ["next-env.d.ts", "**/*.js", "**/*.jsx"],
-  "exclude": ["node_modules"]
+  }
 }
+
