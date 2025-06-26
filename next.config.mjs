@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com'],
+    domains: ['res.cloudinary.com','images.unsplash.com'],
   },
   
-  reactStrictMode: true, // Optional but recommended
+  reactStrictMode: true, 
 };
 
 export default nextConfig;
