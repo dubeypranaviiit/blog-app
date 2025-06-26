@@ -46,7 +46,7 @@ export async function POST(request){
         <h2 style="color: #1d4ed8;">Welcome to <strong>CurioBlog</strong>!</h2>
         <p>Hey there 👋,</p>
         <p>Thanks for subscribing to our blog. You'll now get updates whenever we post new content on tech, tutorials, trends, and more.</p>
-        <a href="https://yourdomain.com/blog" style="display: inline-block; margin-top: 10px; padding: 10px 16px; background-color: #1d4ed8; color: white; text-decoration: none; border-radius: 5px;">Explore Blogs</a>
+        <a href="https://curio-blog-pranav.vercel.app" style="display: inline-block; margin-top: 10px; padding: 10px 16px; background-color: #1d4ed8; color: white; text-decoration: none; border-radius: 5px;">Explore Blogs</a>
         <p style="margin-top: 30px;">Glad to have you with us 💙<br />— CurioBlog  Team</p>
       </div>
     `;
