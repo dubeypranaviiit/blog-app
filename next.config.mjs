@@ -3,6 +3,7 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
+  
   reactStrictMode: true, // Optional but recommended
 };
 
