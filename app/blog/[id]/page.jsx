@@ -1,4 +1,7 @@
 "use client";
+
+import { auth } from "@clerk/nextjs/server";
+
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import axios from "axios";
@@ -16,6 +19,7 @@ export default function BlogPage() {
     const fetchBlog = async () => {
       try {
         const res = await axios.get(`/api/blogById/${id}`);
+         
         setBlog(res.data.blog);
       } catch (err) {
         console.error("Failed to fetch blog:", err);
