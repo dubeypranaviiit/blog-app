@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Blog from "@/lib/modals/Blog.modal";
 import dbConnect from "@/lib/config/db";

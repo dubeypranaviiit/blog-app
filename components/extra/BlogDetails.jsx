@@ -41,6 +41,7 @@
 // };
 
 // export default BlogDetails;
+"use client";
 import { useParams } from "next/navigation";
 import { FiClock, FiTag } from "react-icons/fi";
 import LikeShareComment from "./LikeShareComment";

@@ -1,7 +1,4 @@
 "use client";
-
-import { auth } from "@clerk/nextjs/server";
-
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import axios from "axios";
