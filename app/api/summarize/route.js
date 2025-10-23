@@ -5,7 +5,8 @@ export const dynamic = "force-dynamic"; // Optional: allows dynamic usage on Ver
 export async function POST(req) {
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use lighter model
+     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
 
     const data = await req.json();
     const { content, language } = data;
@@ -21,7 +22,7 @@ const prompt = `Summarize the following blog in ${language || "English"} using c
 
     return Response.json({ summary });
   } catch (err) {
-    console.error("Gemini error:", err);
+    console.log("Gemini error:", err);
 
     const statusCode = err?.status || 500;
     const message =

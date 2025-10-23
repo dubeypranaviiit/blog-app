@@ -2,9 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import axios from "axios";
-// import BlogDetails from '../../../components/extra/BlogDetails'
 import BlogDetails from "@/components/extra/BlogDetails";
-// import CheckOut from "../../../components/CheckOut"
 import CheckOut from "@/components/CheckOut";
 export default function BlogPage() {
   const { id } = useParams();
@@ -19,7 +17,7 @@ export default function BlogPage() {
          
         setBlog(res.data.blog);
       } catch (err) {
-        console.error("Failed to fetch blog:", err);
+        console.log("Failed to fetch blog:", err);
         setError("Blog not found.");
       } finally {
         setLoading(false);
@@ -48,7 +46,7 @@ export default function BlogPage() {
     </p>
 
     <div className="mt-6">
-   <CheckOut />
+     <CheckOut  blogId={blog?._id} />
     </div>
   </div>
         </section>

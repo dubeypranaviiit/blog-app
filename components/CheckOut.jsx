@@ -1,23 +1,43 @@
 'use client';
-
 import { useState } from 'react';
-import axios from 'axios';
+import { useUser } from '@clerk/nextjs';
 
-const CheckOut = () => {
+const CheckOut = ({ blogId = null }) => {
+  const { user } = useUser(); // Get logged-in user
   const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleDonate = async () => {
-    const res = await fetch('/api/stripe', {
-      method: 'POST',
-      body: JSON.stringify({ amount: Number(amount) }),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    if (!amount || Number(amount) <= 0) {
+      alert('Enter a valid amount');
+      return;
+    }
 
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      alert('Error creating Stripe session.');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/stripe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: Number(amount),
+          clerkId: user?.id || null,
+          blogId,
+          email: user?.emailAddresses?.[0]?.emailAddress || null,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Error creating Stripe session.');
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,9 +52,12 @@ const CheckOut = () => {
       />
       <button
         onClick={handleDonate}
-        className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+        disabled={loading}
+        className={`${
+          loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'
+        } text-white px-4 py-2 rounded`}
       >
-        Contribute 
+        {loading ? 'Processing...' : 'Contribute'}
       </button>
     </div>
   );

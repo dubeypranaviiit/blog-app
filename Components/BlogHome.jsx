@@ -1,24 +1,17 @@
+
 'use client';
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useBlogStore } from '@/store/useBlogStore'; // 
 import BlogItem from './BlogItem';
 
 const BlogHome = () => {
   const [menu, setMenu] = useState("All");
-  const [blogs, setBlogs] = useState([]);
+  const { blogs, fetchBlogs } = useBlogStore(); 
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [fetchBlogs]);
 
-  const fetchBlogs = async () => {
-    try {
-      const res = await axios.get('/api/blog');
-      setBlogs(res.data.blogs);
-    } catch (error) {
-      console.error('Error fetching blogs:', error);
-    }
-  };
 
   const filteredBlogs = blogs
     .filter(blog => menu === 'All' || blog.category === menu)
@@ -27,19 +20,7 @@ const BlogHome = () => {
 
   return (
     <div>
-      {/* <div className='flex justify-center gap-6 my-10'> */}
-        {/* {['All', 'technology', 'Startup', 'lifestyle','other'].map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setMenu(cat)}
-            className={`py-1 px-4 rounded-sm ${
-              menu === cat ? 'bg-black text-white' : 'bg-gray-200'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div> */}
+      
       <div className='flex justify-center md:justify-center gap-4 my-6 overflow-x-auto px-4 scrollbar-hide'>
         {['All', 'technology', 'Startup', 'lifestyle', 'other'].map((cat) => (
           <button
@@ -54,17 +35,22 @@ const BlogHome = () => {
         ))}
       </div>
 
+      
       <div className='flex flex-wrap justify-around gap-1 gap-y-10 mb-16 xl:mx-24'>
-        {filteredBlogs.map((item, index) => (
-          <BlogItem
-            key={index}
-            id={item._id || item.id}
-            image={item.image}
-            title={item.title}
-            description={item.description}
-            category={item.category}
-          />
-        ))}
+        {filteredBlogs.length === 0 ? (
+          <p className="text-gray-500 text-center">No blogs available</p>
+        ) : (
+          filteredBlogs.map((item, index) => (
+            <BlogItem
+              key={index}
+              id={item._id || item.id}
+              image={item.image}
+              title={item.title}
+              description={item.description}
+              category={item.category}
+            />
+          ))
+        )}
       </div>
     </div>
   );

@@ -1,30 +1,22 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-// import BlogItem from "../../components/BlogItem";
 import BlogItem from '@/components/BlogItem';
-import axios from 'axios';
+import { useBlogStore } from '@/store/useBlogStore';
 
 const BlogPage = () => {
-  const [blogs, setBlogs] = useState([]);
+  const { blogs, fetchBlogs } = useBlogStore();
   const [menu, setMenu] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortFilter, setSortFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 6;
 
+  
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [fetchBlogs]);
 
-  const fetchBlogs = async () => {
-    try {
-      const res = await axios.get('/api/blog');
-      setBlogs(res.data.blogs);
-    } catch (error) {
-      console.error('Error fetching blogs:', error);
-    }
-  };
-
+  
   const filteredBlogs = blogs
     .filter((blog) => (menu === 'All' ? true : blog.category === menu))
     .filter((blog) =>
@@ -51,11 +43,14 @@ const BlogPage = () => {
   }, [menu, searchQuery, sortFilter]);
 
   return (
-    <div className="w-full  mx-auto px-4 py-10 text-black bg-white">
+    <div className="w-full mx-auto px-4 py-10 text-black bg-white">
+      <h1 className="text-4xl font-bold text-center mb-10">
+        Curated Just for You
+      </h1>
 
-      <h1 className="text-4xl font-bold text-center mb-10">Curated Just for You</h1>
+    
       <div className="w-full flex flex-wrap justify-center gap-4 mb-6">
-        {['All', 'technology', 'Startup', 'lifestyle','other'].map((cat) => (
+        {['All', 'technology', 'Startup', 'lifestyle', 'other'].map((cat) => (
           <button
             key={cat}
             onClick={() => setMenu(cat)}
@@ -67,6 +62,7 @@ const BlogPage = () => {
           </button>
         ))}
       </div>
+
       <div className="flex flex-wrap justify-center gap-4 mb-8">
         <input
           type="text"
@@ -112,6 +108,7 @@ const BlogPage = () => {
           >
             Prev
           </button>
+
           {[...Array(totalPages)].map((_, idx) => (
             <button
               key={idx}
@@ -123,6 +120,7 @@ const BlogPage = () => {
               {idx + 1}
             </button>
           ))}
+
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
@@ -137,3 +135,4 @@ const BlogPage = () => {
 };
 
 export default BlogPage;
+
